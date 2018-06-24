@@ -2,9 +2,12 @@ const holes = document.querySelectorAll(".hole");
 const scoreBoard = document.querySelector(".score");
 const highScores = document.querySelector(".high-scores");
 const moles = document.querySelectorAll(".mole");
+const timer = document.querySelector(".timer");
+let seconds = 0;
 let lastHole;
 let endLoop = false;
 let score = 0;
+let newTimer;
 
 const highScoresList = JSON.parse(localStorage.getItem("highScoresList")) || [];
 
@@ -36,10 +39,16 @@ function peep() {
 }
 
 function startGame() {
+  stopTimer(); // in case it's running
+  seconds = 10;
+  timer.textContent = seconds;
   setTimeout(() => {
     console.log("timeover");
     endLoop = true;
   }, 10000);
+
+  startTimer();
+
   score = 0;
   scoreBoard.textContent = score;
   endLoop = false;
@@ -54,6 +63,7 @@ function hit(e) {
 }
 
 function endGame() {
+  stopTimer();
   highScoresList.push(score);
   highScoresList.sort((a, b) => b - a);
   if (highScoresList.length > 3) highScoresList.length = 3;
@@ -68,6 +78,17 @@ function resetScores() {
 function setStorage() {
   localStorage.setItem("highScoresList", JSON.stringify(highScoresList));
   highScores.textContent = highScoresList;
+}
+
+function startTimer() {
+  newTimer = setInterval(() => {
+    seconds--;
+    timer.textContent = seconds;
+  }, 1000);
+}
+
+function stopTimer() {
+  clearInterval(newTimer);
 }
 
 moles.forEach(mole => mole.addEventListener("click", hit));
