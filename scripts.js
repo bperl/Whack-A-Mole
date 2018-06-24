@@ -6,7 +6,9 @@ let lastHole;
 let endLoop = false;
 let score = 0;
 
-const highScoresList = [];
+const highScoresList = JSON.parse(localStorage.getItem("highScoresList")) || [];
+
+highScores.textContent = highScoresList;
 
 function randomTime(min, max) {
   return Math.ceil(Math.random() * max - min + min);
@@ -55,6 +57,16 @@ function endGame() {
   highScoresList.push(score);
   highScoresList.sort((a, b) => b - a);
   if (highScoresList.length > 3) highScoresList.length = 3;
+  setStorage();
+}
+
+function resetScores() {
+  highScoresList.length = 0;
+  setStorage();
+}
+
+function setStorage() {
+  localStorage.setItem("highScoresList", JSON.stringify(highScoresList));
   highScores.textContent = highScoresList;
 }
 
