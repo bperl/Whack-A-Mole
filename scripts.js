@@ -3,15 +3,19 @@ const scoreBoard = document.querySelector(".score");
 const highScores = document.querySelector(".high-scores");
 const moles = document.querySelectorAll(".mole");
 const timer = document.querySelector(".timer");
+const levelBtn = document.querySelector(".level-btn");
 let seconds = 0;
 let lastHole;
 let endLoop = false;
 let score = 0;
 let newTimer;
+let levels = { Fast: [300, 500], Medium: [700, 900], Slow: [1000, 1500] };
 
 const highScoresList = JSON.parse(localStorage.getItem("highScoresList")) || [];
+let level = localStorage.getItem("level") || "Medium";
 
 highScores.textContent = highScoresList;
+levelBtn.textContent = level;
 
 function randomTime(min, max) {
   return Math.ceil(Math.random() * max - min + min);
@@ -29,7 +33,8 @@ function randomHole() {
 
 function peep() {
   const hole = randomHole();
-  const lengthTime = randomTime(500, 1000);
+  console.log(levels[level]);
+  const lengthTime = randomTime(...levels[level]);
   holes[hole].classList.add("up");
   setTimeout(() => {
     holes[hole].classList.remove("up");
@@ -91,4 +96,25 @@ function stopTimer() {
   clearInterval(newTimer);
 }
 
+function toggleLevel() {
+  switch (this.textContent) {
+    case "Medium":
+      setLevel("Fast");
+      break;
+    case "Fast":
+      setLevel("Slow");
+      break;
+    case "Slow":
+      setLevel("Medium");
+      break;
+  }
+}
+
+function setLevel(nextLevel) {
+  level = nextLevel;
+  levelBtn.textContent = nextLevel;
+  localStorage.setItem("level", nextLevel);
+}
+
 moles.forEach(mole => mole.addEventListener("click", hit));
+levelBtn.addEventListener("click", toggleLevel);
